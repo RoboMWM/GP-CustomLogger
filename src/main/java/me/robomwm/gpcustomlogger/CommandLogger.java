@@ -7,19 +7,26 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static org.bukkit.Bukkit.getServer;
 
 public class CommandLogger implements Listener
 {
     GriefPrevention gp = (GriefPrevention)getServer().getPluginManager().getPlugin("GriefPrevention");
+    private final SimpleDateFormat timestampFormat = new SimpleDateFormat("HH:mm");
 
     //Feature: log all slash commands GP doesn't log
     @EventHandler(ignoreCancelled = false, priority = EventPriority.MONITOR)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
+
         if (event.isCancelled())
         {
-                gp.AddLogEntry("(Cancelled) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+            String timestamp = this.timestampFormat.format(new Date());
+            gp.AddLogEntry(timestamp + " (Cancelled) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
         }
         else
         {
@@ -31,7 +38,10 @@ public class CommandLogger implements Listener
             else if ((gp.config_spam_monitorSlashCommands.contains(event.getMessage().substring(0, cmdIndex))))
                 return;
             else
-                gp.AddLogEntry(event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+            {
+                String timestamp = this.timestampFormat.format(new Date());
+                gp.AddLogEntry(timestamp + " " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+            }
         }
     }
 
@@ -41,7 +51,8 @@ public class CommandLogger implements Listener
     {
         if (event.isCancelled())
         {
-            gp.AddLogEntry("(Cancelled) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+            String timestamp = this.timestampFormat.format(new Date());
+            gp.AddLogEntry(timestamp + " (Cancelled) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
         }
     }
 }
