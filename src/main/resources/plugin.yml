@@ -1,0 +1,6 @@
+name: GP-CustomLogger
+version: ${project.version}
+#website:
+author: RoboMWM
+main: me.robomwm.gpcustomlogger.Main
+depend: [GriefPrevention]
