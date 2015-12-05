@@ -31,6 +31,12 @@ public class CommandLogger implements Listener
         else
         {
             int cmdIndex = event.getMessage().indexOf(' ');
+            if (cmdIndex < 0) //if command has no arguments, log
+            {
+                String timestamp = this.timestampFormat.format(new Date());
+                gp.AddLogEntry(timestamp + " " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+                return;
+            }
             //Don't log whispers (already logged by GP)
             if ((gp.config_eavesdrop_whisperCommands.contains(event.getMessage().substring(0, cmdIndex))))
                 return;
