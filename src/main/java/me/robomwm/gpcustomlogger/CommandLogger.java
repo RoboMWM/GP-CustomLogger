@@ -2,6 +2,7 @@ package me.robomwm.gpcustomlogger;
 
 import me.ryanhamshire.GriefPrevention.CustomLogEntryTypes;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -51,6 +52,18 @@ public class CommandLogger implements Listener
         if (event.isCancelled())
         {
             gp.AddLogEntry("(Cancelled) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+            return;
+        }
+        //Don't waste time figuring out if a player was softmuted if they're the only one on the server
+        if (Bukkit.getOnlinePlayers().size() < 2)
+            return;
+
+        //Is the player the only recipient?
+        if (event.getRecipients().size() == 1)
+        {
+            //Is the player already softmuted?
+            if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
+                gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
         }
     }
 }
