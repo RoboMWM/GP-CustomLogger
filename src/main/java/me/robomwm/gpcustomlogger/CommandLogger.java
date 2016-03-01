@@ -63,10 +63,12 @@ public class CommandLogger implements Listener
         //Is the player the only recipient?
         if (event.getRecipients().size() == 1)
         {
-            //Is the player already softmuted?
+            //Is the player already softmuted? GP logs softmuted messages for us already
             if (!gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
+            {
                 gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
                 gp.AddLogEntry("Players online: " + event.getOnlinePlayers().size(), CustomLogEntryTypes.AdminActivity, true);
+            }
         }
     }
 }
