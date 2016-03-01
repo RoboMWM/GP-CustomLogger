@@ -67,7 +67,7 @@ public class CommandLogger implements Listener
             if (!gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
             {
                 gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
-                gp.AddLogEntry("Players online: " + event.getOnlinePlayers().size(), CustomLogEntryTypes.AdminActivity, true);
+                gp.AddLogEntry("Players online: " + Bukkit.getOnlinePlayers().size(), CustomLogEntryTypes.AdminActivity, true);
             }
         }
     }
