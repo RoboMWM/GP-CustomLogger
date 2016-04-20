@@ -41,5 +41,4 @@
             <systemPath>${basedir}/lib/GriefPrevention.jar</systemPath>
         </dependency>
     </dependencies>
-
 </project>

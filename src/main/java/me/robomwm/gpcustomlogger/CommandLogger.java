@@ -55,6 +55,8 @@ public class CommandLogger implements Listener
             gp.AddLogEntry("(Cancelled) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
             return;
         }
+        
+        //Feature: log "spam-muted" chat messages
         //Don't waste time figuring out if a player was softmuted if they're the only one on the server
         if (Bukkit.getOnlinePlayers().size() < 2)
             return;
@@ -62,9 +64,12 @@ public class CommandLogger implements Listener
         //Is the player the only recipient?
         if (event.getRecipients().size() == 1)
         {
-            //Is the player already softmuted?
-            if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
+            //Is the player already softmuted? GP logs softmuted messages for us already
+            if (!gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
+            {
                 gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+                gp.AddLogEntry("Players online: " + Bukkit.getOnlinePlayers().size(), CustomLogEntryTypes.AdminActivity, true);
+            }
         }
     }
 
