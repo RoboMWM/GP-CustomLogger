@@ -4,7 +4,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -60,6 +59,8 @@ $RECYCLE.BIN/
 # ZEINTELLIJ
 workspace.xml
 tasks.xml
+.idea/libraries
+.idea/copyright
 out/
 target/
 *.MF

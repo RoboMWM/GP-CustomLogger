@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
@@ -65,5 +66,14 @@ public class CommandLogger implements Listener
             if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
                 gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
         }
+    }
+
+    //Shoulda just jammed this all in main. Oh well, too lazy to refactor
+    //Feature: add note that sign editing was canceled
+    @EventHandler (priority = EventPriority.MONITOR)
+    void onSignEdit(SignChangeEvent event)
+    {
+        if (event.isCancelled())
+            gp.AddLogEntry("Sign text was canceled", CustomLogEntryTypes.AdminActivity, true);
     }
 }
