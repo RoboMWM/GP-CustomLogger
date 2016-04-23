@@ -65,11 +65,12 @@ public class CommandLogger implements Listener
         if (event.getRecipients().size() == 1)
         {
             //Is the player already softmuted? GP logs softmuted messages for us already
-            if (!gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
-            {
+            //However, we'll log softmuted messages anyways since GP doesn't log the initial message that auto-softmutes them
+            if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
+                gp.AddLogEntry("(soft-muted) " + event.getPlayer().getName() + "> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+            else
                 gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
-                gp.AddLogEntry("Players online: " + Bukkit.getOnlinePlayers().size(), CustomLogEntryTypes.AdminActivity, true);
-            }
+
         }
     }
 
