@@ -57,28 +57,26 @@ public class CommandLogger implements Listener
         }
 
         //Feature: log "spam-muted" chat messages
-        //Don't waste time figuring out if a player was softmuted if they're the only one on the server
-
-        int numberOfOnlinePlayers = Bukkit.getOnlinePlayers().size();
-
-        if (Bukkit.getOnlinePlayers().size() < numberOfOnlinePlayers)
-            return;
 
         //Is the player the only recipient? (Spam messages are only sent to recipient)
         if (event.getRecipients().size() == 1)
         {
+            //Don't waste time figuring out if a player was softmuted if they're the only one on the server
+            if (Bukkit.getOnlinePlayers().size() < 2)
+                return;
+
             //Is the player already softmuted?
             if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
-                gp.AddLogEntry("(soft-muted) " + event.getPlayer().getName() + "> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+                gp.AddLogEntry("(soft-muted) " + event.getPlayer().getName() + ">> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
             else
-                gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+                gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + "> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
         }
-        //Otherwise is player softmuted?
+        //(If not only recipient...) Otherwise is player softmuted?
         //GP doesn't log the initial message that auto-softmutes players, so I decided to implement this feature myself.
-        else if (event.getRecipients().size() < numberOfOnlinePlayers)
+        else if (event.getRecipients().size() < Bukkit.getOnlinePlayers().size())
         {
             if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId())) //Make sure this guy is indeed softmuted (accounts for "group chat" plugins)
-                gp.AddLogEntry(numberOfOnlinePlayers + " (soft-muted) " + event.getPlayer().getName() + "> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+                gp.AddLogEntry("(soft-muted) " + event.getPlayer().getName() + ">> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
         }
     }
 
