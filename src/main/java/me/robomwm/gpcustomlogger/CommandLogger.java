@@ -3,12 +3,23 @@ package me.robomwm.gpcustomlogger;
 import me.ryanhamshire.GriefPrevention.CustomLogEntryTypes;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -82,10 +93,50 @@ public class CommandLogger implements Listener
 
     //Shoulda just jammed this all in main. Oh well, too lazy to refactor
     //Feature: add note that sign editing was canceled
-    @EventHandler (priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     void onSignEdit(SignChangeEvent event)
     {
         if (event.isCancelled())
             gp.AddLogEntry("Sign text was canceled", CustomLogEntryTypes.AdminActivity, true);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    void onItemRename(InventoryClickEvent event)
+    {
+        Inventory inventory = event.getInventory();
+
+        //We don't care if it isn't an anvil
+        //Could also do event.getInventory().getType() != InventoryType.ANVIL
+        //which would be more performant? Or it is just the same thing.
+        if (!(inventory instanceof AnvilInventory))
+            return;
+
+        /* Would this be more performant? I doubt it but idk I'm new to the inventory side of things
+        InventoryView view = event.getView();
+        int rawSlot = event.getRawSlot();
+
+        if (rawSlot != 2)
+            return;
+        if (rawSlot != view.convertSlot(rawSlot))
+            return;
+         */
+
+        //Only care about the resulting item
+        if (event.getSlotType() != InventoryType.SlotType.RESULT)
+            return;
+
+        ItemStack item = event.getCurrentItem();
+        //nullcheck, I guess
+        if (item == null)
+            return;
+
+        ItemMeta meta = item.getItemMeta();
+
+        //Does item have metadata/a custom name?
+        if (meta == null && !meta.hasDisplayName())
+            return;
+
+        gp.AddLogEntry(event.getWhoClicked().getName() + " Named a " + item.getType().name() + " : " + meta.getDisplayName(), CustomLogEntryTypes.AdminActivity, true);
+        Bukkit.broadcast(event.getWhoClicked().getName() + " Named a " + item.getType().name() + " : " + meta.getDisplayName(), "topkek");
     }
 }
