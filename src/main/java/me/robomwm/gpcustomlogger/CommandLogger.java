@@ -133,10 +133,9 @@ public class CommandLogger implements Listener
         ItemMeta meta = item.getItemMeta();
 
         //Does item have metadata/a custom name?
-        if (meta == null && !meta.hasDisplayName())
             return;
 
-        gp.AddLogEntry(event.getWhoClicked().getName() + " Named a " + item.getType().name() + " : " + meta.getDisplayName(), CustomLogEntryTypes.AdminActivity, true);
-        Bukkit.broadcast(event.getWhoClicked().getName() + " Named a " + item.getType().name() + " : " + meta.getDisplayName(), "topkek");
+        gp.AddLogEntry(event.getWhoClicked().getName() + " Named a " + item.getType().name() + ": " + meta.getDisplayName(), CustomLogEntryTypes.AdminActivity, true);
+        Bukkit.broadcast(event.getWhoClicked().getName() + " Named a " + item.getType().name() + ": " + meta.getDisplayName(), "topkek");
     }
 }
