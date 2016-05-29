@@ -6,7 +6,7 @@
 
     <groupId>me.robomwm.gpcustomlogger</groupId>
     <artifactId>GP-CustomLogger</artifactId>
-    <version>1.2</version>
+    <version>1.2.1</version>
     <repositories>
         <repository>
             <id>spigot-repo</id>
