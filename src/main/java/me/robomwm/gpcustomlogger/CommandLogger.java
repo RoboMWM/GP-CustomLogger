@@ -3,6 +3,7 @@ package me.robomwm.gpcustomlogger;
 import me.ryanhamshire.GriefPrevention.CustomLogEntryTypes;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -64,6 +65,7 @@ public class CommandLogger implements Listener
         if (event.isCancelled())
         {
             gp.AddLogEntry("(Cancelled) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+            Bukkit.broadcast(ChatColor.DARK_RED + "<" + event.getPlayer().getName() + "> " + event.getMessage(), "topkek");
             return;
         }
 
@@ -78,17 +80,21 @@ public class CommandLogger implements Listener
 
             //Is the player already softmuted?
             if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
-                gp.AddLogEntry("(soft-muted) " + event.getPlayer().getName() + ">> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+                return; //Already logged by GP
             else
+            {
                 gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + "> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+                Bukkit.broadcast(ChatColor.DARK_RED + "(spam) <" + event.getPlayer().getName() + "> " + event.getMessage(), "topkek");
+            }
+
         }
         //(If not only recipient...) Otherwise is player softmuted?
         //GP doesn't log the initial message that auto-softmutes players, so I decided to implement this feature myself.
-        else if (event.getRecipients().size() < Bukkit.getOnlinePlayers().size())
-        {
-            if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId())) //Make sure this guy is indeed softmuted (accounts for "group chat" plugins)
-                gp.AddLogEntry("(soft-muted) " + event.getPlayer().getName() + ">> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
-        }
+//        else if (event.getRecipients().size() < Bukkit.getOnlinePlayers().size())
+//        {
+//            if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId())) //Make sure this guy is indeed softmuted (accounts for "group chat" plugins)
+//                gp.AddLogEntry("(soft-muted) " + event.getPlayer().getName() + ">> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+//        }
     }
 
     //Shoulda just jammed this all in main. Oh well, too lazy to refactor
