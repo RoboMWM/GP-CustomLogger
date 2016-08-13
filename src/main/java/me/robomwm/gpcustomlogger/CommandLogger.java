@@ -65,7 +65,6 @@ public class CommandLogger implements Listener
         if (event.isCancelled())
         {
             gp.AddLogEntry("(Cancelled) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
-            Bukkit.broadcast(ChatColor.DARK_RED + "<" + event.getPlayer().getName() + "> " + event.getMessage(), "topkek");
             return;
         }
 
