@@ -11,9 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import static org.bukkit.Bukkit.getServer;
-
-
 public class Main extends JavaPlugin
 {
     GriefPrevention gp;
@@ -32,29 +29,41 @@ public class Main extends JavaPlugin
             {
                 afkChecker();
             }
-        }.runTaskTimer(this, 6000L, 6000L);
+        }.runTaskTimer(this, 12000L, 12000L);
     }
 
     void afkChecker()
     {
+        StringBuilder afkPlayers = new StringBuilder();
         PlayerData playerData;
+        Location lastLocation;
+        //No need to check if only one player is online
+        if (Bukkit.getOnlinePlayers().size() < 2)
+            return;
+
         for (Player player : Bukkit.getOnlinePlayers())
         {
             playerData = ds.getPlayerData(player.getUniqueId());
             //Hmm, would be nice if he had an API method to determine if a player is AFK.
-            Location lastLocation = playerData.lastAfkCheckLocation;
-            if(!player.isInsideVehicle() && (lastLocation == null || lastLocation.distanceSquared(player.getLocation()) >= 0) && !player.getLocation().getBlock().isLiquid())
+            lastLocation = playerData.lastAfkCheckLocation;
+            try
             {
-                if (!player.isOp() && player.getWorld().equals(world))
-                {
-                    player.setSleepingIgnored(false);
-                    Bukkit.broadcast(ChatColor.DARK_RED + player.getName() + " is NOT afk and is in overworld", "topkek");
+                if(!player.isInsideVehicle() && (lastLocation == null || lastLocation.distanceSquared(player.getLocation()) >= 0) && !player.getLocation().getBlock().isLiquid())
+                { //Player is NOT afk
+                    if (!player.isOp())
+                        player.setSleepingIgnored(false);
                 }
-                Bukkit.broadcast(ChatColor.DARK_RED + player.getName() + " isSleepIgnored = " + String.valueOf(player.isSleepingIgnored()) , "topkek");
-                continue;
+                else
+                { //Otherwise, is afk
+                    player.setSleepingIgnored(true);
+                    afkPlayers.append(player.getName());
+                    afkPlayers.append(", ");
+                }
             }
-            player.setSleepingIgnored(true);
-            Bukkit.broadcast(ChatColor.DARK_RED + player.getName() + " is afk", "topkek");
-        }
+            catch(IllegalArgumentException e)
+            { //Occurs when distanceSquared function evaluates two locations in different worlds.
+            }
+        } //end foreach loop
+        Bukkit.broadcast(ChatColor.GOLD + "AFK: " + afkPlayers.toString(), "topkek");
     }
 }
