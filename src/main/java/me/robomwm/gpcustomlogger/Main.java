@@ -83,7 +83,8 @@ public class Main extends JavaPlugin
                 { //Otherwise, is afk
                     player.setSleepingIgnored(true);
                     afkPlayers.append(player.getName());
-                    afkPlayers.append(lastLocation.toString());
+                    if (lastLocation != null)
+                        afkPlayers.append(lastLocation.toString());
                     afkPlayers.append(", ");
                 }
             }

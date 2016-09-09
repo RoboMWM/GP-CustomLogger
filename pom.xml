@@ -6,7 +6,7 @@
 
     <groupId>me.robomwm.gpcustomlogger</groupId>
     <artifactId>GP-CustomLogger</artifactId>
-    <version>1.2.1</version>
+    <version>1.3</version>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
