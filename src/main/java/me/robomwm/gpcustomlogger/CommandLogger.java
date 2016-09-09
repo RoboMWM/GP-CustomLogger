@@ -104,7 +104,8 @@ public class CommandLogger implements Listener
             if (!gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId())) //GP logs softmuted players, ensure this isn't the case
             {
                 gp.AddLogEntry("(semi-muted) " + event.getPlayer().getName() + "^^", CustomLogEntryTypes.AdminActivity, true);
-                instance.notifyServer(ChatColor.GRAY + "(semi-muted) <" + event.getPlayer().getName() + "> " + event.getMessage());
+                if (instance.oppedPlayer != null && !event.getRecipients().contains(instance.oppedPlayer))
+                    instance.notifyServer(ChatColor.GRAY + "(semi-muted) <" + event.getPlayer().getName() + "> " + event.getMessage());
             }
         }
     }
