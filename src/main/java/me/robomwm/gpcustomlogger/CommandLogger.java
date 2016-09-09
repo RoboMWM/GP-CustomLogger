@@ -4,6 +4,7 @@ import me.ryanhamshire.GriefPrevention.CustomLogEntryTypes;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +17,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -27,6 +30,11 @@ import static org.bukkit.Bukkit.getServer;
 public class CommandLogger implements Listener
 {
     GriefPrevention gp = (GriefPrevention)getServer().getPluginManager().getPlugin("GriefPrevention");
+    Main instance;
+    CommandLogger(Main main)
+    {
+        instance = main; //YES I KNOW NEVER NAME MAIN CLASS MAIN I'M SCREAMING AT MY FORMER SELF
+    }
 
     //Feature: log all slash commands GP doesn't log
     @EventHandler(priority = EventPriority.MONITOR)
@@ -65,6 +73,7 @@ public class CommandLogger implements Listener
         if (event.isCancelled())
         {
             gp.AddLogEntry("(Cancelled) " + event.getPlayer().getName() + ": " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+            instance.notifyServer(ChatColor.DARK_RED + "(canceled) <" + event.getPlayer().getName() + "> " + event.getMessage());
             return;
         }
 
@@ -81,19 +90,23 @@ public class CommandLogger implements Listener
             if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId()))
                 return; //Already logged by GP
             else
-            {
+            { //TODO: this doesn't account for the edge case that a player is /ignored by all other online players
                 gp.AddLogEntry("(spam-muted) " + event.getPlayer().getName() + "> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
-                Bukkit.broadcast(ChatColor.DARK_RED + "(spam) <" + event.getPlayer().getName() + "> " + event.getMessage(), "topkek");
+                instance.notifyServer(ChatColor.DARK_RED + "(spam) <" + event.getPlayer().getName() + "> " + event.getMessage());
             }
-
         }
-        //(If not only recipient...) Otherwise is player softmuted?
-        //GP doesn't log the initial message that auto-softmutes players, so I decided to implement this feature myself.
-//        else if (event.getRecipients().size() < Bukkit.getOnlinePlayers().size())
-//        {
-//            if (gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId())) //Make sure this guy is indeed softmuted (accounts for "group chat" plugins)
-//                gp.AddLogEntry("(soft-muted) " + event.getPlayer().getName() + ">> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
-//        }
+
+        /**
+         * Note if not all players hear this player (either due to /ignore or other means)
+         */
+        else if (event.getRecipients().size() < Bukkit.getOnlinePlayers().size())
+        {
+            if (!gp.dataStore.isSoftMuted(event.getPlayer().getUniqueId())) //GP logs softmuted players, ensure this isn't the case
+            {
+                gp.AddLogEntry("(semi-muted) " + event.getPlayer().getName() + ">> " + event.getMessage(), CustomLogEntryTypes.AdminActivity, true);
+                instance.notifyServer(ChatColor.GRAY + "(semi-muted) <" + event.getPlayer().getName() + "> " + event.getMessage());
+            }
+        }
     }
 
     //Shoulda just jammed this all in main. Oh well, too lazy to refactor
@@ -142,6 +155,6 @@ public class CommandLogger implements Listener
             return;
 
         gp.AddLogEntry(event.getWhoClicked().getName() + " Named a " + item.getType().name() + ": " + meta.getDisplayName(), CustomLogEntryTypes.AdminActivity, true);
-        Bukkit.broadcast(event.getWhoClicked().getName() + " Named a " + item.getType().name() + ": " + meta.getDisplayName(), "topkek");
+        instance.notifyServer(event.getWhoClicked().getName() + " Named a " + item.getType().name() + ": " + meta.getDisplayName());
     }
 }
