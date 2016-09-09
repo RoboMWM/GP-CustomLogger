@@ -9,12 +9,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Main extends JavaPlugin
+public class Main extends JavaPlugin implements Listener
 {
     GriefPrevention gp;
     DataStore ds;
@@ -46,6 +47,7 @@ public class Main extends JavaPlugin
     public void onEnable()
     {
         getServer().getPluginManager().registerEvents(new CommandLogger(this), this);
+        getServer().getPluginManager().registerEvents(this, this);
         gp = (GriefPrevention)getServer().getPluginManager().getPlugin("GriefPrevention");
         ds = gp.dataStore;
         world = Bukkit.getWorld("world");
