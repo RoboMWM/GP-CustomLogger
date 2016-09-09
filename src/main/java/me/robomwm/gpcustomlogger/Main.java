@@ -36,7 +36,7 @@ public class Main extends JavaPlugin
     }
     void notifyServer(String message)
     {
-        this.getLogger().info(message);
+        this.getLogger().info(ChatColor.stripColor(message));
         if (oppedPlayer != null)
             oppedPlayer.sendMessage(message);
     }
