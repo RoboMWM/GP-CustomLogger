@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -157,5 +158,17 @@ public class CommandLogger implements Listener
 
         gp.AddLogEntry(event.getWhoClicked().getName() + " Named a " + item.getType().name() + ": " + meta.getDisplayName(), CustomLogEntryTypes.AdminActivity, true);
         instance.notifyServer(event.getWhoClicked().getName() + " Named a " + item.getType().name() + ": " + meta.getDisplayName());
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    void onPlayerDeath(PlayerDeathEvent event)
+    {
+        instance.notifyServer(event.getDeathMessage());
+        for (Player player : instance.getServer().getOnlinePlayers())
+        {
+            player.sendActionBar(event.getDeathMessage());
+        }
+        gp.AddLogEntry(event.getDeathMessage() + " died at " + event.getEntity().getLocation(), CustomLogEntryTypes.AdminActivity, true);
+        event.setDeathMessage("");
     }
 }
