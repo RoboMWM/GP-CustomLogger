@@ -163,12 +163,6 @@ public class CommandLogger implements Listener
     @EventHandler(priority = EventPriority.LOWEST)
     void onPlayerDeath(PlayerDeathEvent event)
     {
-        instance.notifyServer(event.getDeathMessage());
-        for (Player player : instance.getServer().getOnlinePlayers())
-        {
-            player.sendActionBar(event.getDeathMessage());
-        }
         gp.AddLogEntry(event.getDeathMessage() + " died at " + event.getEntity().getLocation(), CustomLogEntryTypes.AdminActivity, true);
-        event.setDeathMessage("");
     }
 }
